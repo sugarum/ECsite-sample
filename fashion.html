@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ファッション - ECショップ</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .category-page {
+            padding: 2rem 0;
+            background: var(--background-color);
+        }
+        
+        .category-header {
+            background: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .category-title {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--text-color);
+        }
+        
+        .category-description {
+            font-size: 1.1rem;
+            color: var(--secondary-color);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .category-layout {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 2rem;
+            align-items: start;
+        }
+        
+        .filters-sidebar {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            position: sticky;
+            top: 100px;
+        }
+        
+        .filter-section {
+            margin-bottom: 2rem;
+        }
+        
+        .filter-section:last-child {
+            margin-bottom: 0;
+        }
+        
+        .filter-title {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+        
+        .filter-option {
+            margin-bottom: 0.5rem;
+        }
+        
+        .filter-option label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        
+        .filter-option input[type="checkbox"] {
+            margin: 0;
+        }
+        
+        .price-range {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        
+        .price-input {
+            width: 70px;
+            padding: 0.4rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+        
+        .products-section {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .products-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--background-color);
+        }
+        
+        .results-count {
+            font-size: 0.9rem;
+            color: var(--secondary-color);
+        }
+        
+        .sort-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .sort-select {
+            padding: 0.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+        
+        .view-toggle {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .view-btn {
+            padding: 0.5rem;
+            border: 1px solid var(--border-color);
+            background: white;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        
+        .view-btn.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            padding: 2rem;
+        }
+        
+        .pagination {
+            padding: 2rem;
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .pagination button {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border-color);
+            background: white;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+        
+        .pagination button:hover {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        .pagination button.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        .pagination button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .breadcrumb {
+            padding: 1rem 0;
+            background: var(--background-color);
+        }
+        
+        .breadcrumb nav {
+            font-size: 0.9rem;
+            color: var(--secondary-color);
+        }
+        
+        .breadcrumb a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        
+        @media (max-width: 768px) {
+            .category-layout {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .filters-sidebar {
+                position: static;
+                order: 2;
+            }
+            
+            .products-section {
+                order: 1;
+            }
+            
+            .products-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: stretch;
+            }
+            
+            .sort-controls {
+                justify-content: space-between;
+            }
+            
+            .products-grid {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 1rem;
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-top">
+                <div class="logo">
+                    <h1><a href="index.html" style="color: inherit; text-decoration: none;">ECショップ</a></h1>
+                </div>
+                <div class="search-bar">
+                    <input type="text" placeholder="商品を検索...">
+                    <button type="submit">検索</button>
+                </div>
+                <div class="header-actions">
+                    <a href="cart.html" class="cart" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                        <span class="cart-icon">🛒</span>
+                        <span class="cart-count">0</span>
+                    </a>
+                    <div class="user-account">
+                        <span>ログイン</span>
+                    </div>
+                </div>
+            </div>
+            <nav class="navigation">
+                <ul>
+                    <li><a href="electronics.html">家電</a></li>
+                    <li><a href="fashion.html" style="color: var(--primary-color); font-weight: 600;">ファッション</a></li>
+                    <li><a href="books.html">本</a></li>
+                    <li><a href="sports.html">スポーツ</a></li>
+                    <li><a href="home.html">ホーム</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section class="breadcrumb">
+        <div class="container">
+            <nav>
+                <a href="index.html">ホーム</a> > ファッション
+            </nav>
+        </div>
+    </section>
+
+    <section class="category-header">
+        <div class="container">
+            <h1 class="category-title">👕 ファッション</h1>
+            <p class="category-description">
+                メンズ・レディース・キッズまで、幅広いスタイルのファッションアイテムを
+                お手頃価格でご提供しています。
+            </p>
+        </div>
+    </section>
+
+    <main class="category-page">
+        <div class="container">
+            <div class="category-layout">
+                <aside class="filters-sidebar">
+                    <div class="filter-section">
+                        <h3 class="filter-title">価格帯</h3>
+                        <div class="price-range">
+                            <input type="number" class="price-input" placeholder="最小">
+                            <span>〜</span>
+                            <input type="number" class="price-input" placeholder="最大">
+                        </div>
+                    </div>
+                    
+                    <div class="filter-section">
+                        <h3 class="filter-title">性別</h3>
+                        <div class="filter-option">
+                            <label><input type="checkbox"> メンズ (28)</label>
+                        </div>
+                        <div class="filter-option">
+                            <label><input type="checkbox"> レディース (35)</label>
+                        </div>
+                        <div class="filter-option">
+                            <label><input type="checkbox"> キッズ (12)</label>
+                        </div>
+                        <div class="filter-option">
+                            <label><input type="checkbox"> ユニセックス (18)</label>
+                        </div>
+                    </div>
+                    
+                    <div class="filter-section">
+                        <h3 class="filter-title">ブランド</h3>
+                        <div class="filter-option">
+                            <label><input type="checkbox"> ユニクロ (15)</label>
+                        </div>
+                        <div class="filter-option">
+                            <label><input type="checkbox"> ZARA (12)</label>
+                        </div>
+                        <div class="filter-option">
+                            <label><input type="checkbox"> H&M (18)</label>
+                        </div>
+                        <div class="filter-option">
+                            <label><input type="checkbox"> GU (8)</label>
+                        </div>
+                        <div class="filter-option">
+                            <label><input type="checkbox"> その他 (40)</label>
+                        </div>
+                    </div>
+                    
+                    <div class="filter-section">
+                        <h3 class="filter-title">サイズ</h3>
+                        <div class="filter-option">
+                            <label><input type="checkbox"> XS (8)</label>
+                        </div>
+                        <div class="filter-option">
+                            <label><input type="checkbox"> S (25)</label>
+                        </div>
+                        <div class="filter-option">
+                            <label><input type="checkbox"> M (32)</label>
+                        </div>
+                        <div class="filter-option">
+                            <label><input type="checkbox"> L (28)</label>
+                        </div>
+                        <div class="filter-option">
+                            <label><input type="checkbox"> XL (15)</label>
+                        </div>
+                    </div>
+                    
+                    <div class="filter-section">
+                        <h3 class="filter-title">カテゴリ</h3>
+                        <div class="filter-option">
+                            <label><input type="checkbox"> トップス (45)</label>
+                        </div>
+                        <div class="filter-option">
+                            <label><input type="checkbox"> ボトムス (32)</label>
+                        </div>
+                        <div class="filter-option">
+                            <label><input type="checkbox"> アウター (18)</label>
+                        </div>
+                        <div class="filter-option">
+                            <label><input type="checkbox"> シューズ (28)</label>
+                        </div>
+                        <div class="filter-option">
+                            <label><input type="checkbox"> アクセサリー (20)</label>
+                        </div>
+                    </div>
+                </aside>
+
+                <section class="products-section">
+                    <div class="products-header">
+                        <div class="results-count">93件の商品が見つかりました</div>
+                        <div class="sort-controls">
+                            <select class="sort-select">
+                                <option value="popular">人気順</option>
+                                <option value="price-low">価格の安い順</option>
+                                <option value="price-high">価格の高い順</option>
+                                <option value="newest">新着順</option>
+                                <option value="rating">評価の高い順</option>
+                            </select>
+                            <div class="view-toggle">
+                                <button class="view-btn active">⊞</button>
+                                <button class="view-btn">☰</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="products-grid">
+                        <div class="product-card">
+                            <a href="product.html" style="text-decoration: none; color: inherit;">
+                                <div class="product-image">
+                                    <img src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=300&fit=crop" alt="カジュアルシャツ" style="width: 100%; height: 100%; object-fit: cover; border-radius: 6px;">
+                                </div>
+                                <div class="product-info">
+                                    <h3>カジュアルシャツ</h3>
+                                    <div class="rating">★★★★☆</div>
+                                    <div class="price">¥3,980</div>
+                                </div>
+                            </a>
+                            <div style="padding: 0 1.5rem 1.5rem;">
+                                <button class="add-to-cart">カートに追加</button>
+                            </div>
+                        </div>
+
+                        <div class="product-card">
+                            <a href="product.html" style="text-decoration: none; color: inherit;">
+                                <div class="product-image">
+                                    <img src="https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=400&h=300&fit=crop" alt="デニムパンツ" style="width: 100%; height: 100%; object-fit: cover; border-radius: 6px;">
+                                </div>
+                                <div class="product-info">
+                                    <h3>デニムパンツ</h3>
+                                    <div class="rating">★★★★★</div>
+                                    <div class="price">¥5,980</div>
+                                </div>
+                            </a>
+                            <div style="padding: 0 1.5rem 1.5rem;">
+                                <button class="add-to-cart">カートに追加</button>
+                            </div>
+                        </div>
+
+                        <div class="product-card">
+                            <a href="product.html" style="text-decoration: none; color: inherit;">
+                                <div class="product-image">
+                                    <img src="https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=400&h=300&fit=crop" alt="ニットセーター" style="width: 100%; height: 100%; object-fit: cover; border-radius: 6px;">
+                                </div>
+                                <div class="product-info">
+                                    <h3>ニットセーター</h3>
+                                    <div class="rating">★★★★☆</div>
+                                    <div class="price">¥4,500</div>
+                                </div>
+                            </a>
+                            <div style="padding: 0 1.5rem 1.5rem;">
+                                <button class="add-to-cart">カートに追加</button>
+                            </div>
+                        </div>
+
+                        <div class="product-card">
+                            <a href="product.html" style="text-decoration: none; color: inherit;">
+                                <div class="product-image">
+                                    <img src="https://images.unsplash.com/photo-1551028719-00167b16eac5?w=400&h=300&fit=crop" alt="レザージャケット" style="width: 100%; height: 100%; object-fit: cover; border-radius: 6px;">
+                                </div>
+                                <div class="product-info">
+                                    <h3>レザージャケット</h3>
+                                    <div class="rating">★★★★★</div>
+                                    <div class="price">¥12,800</div>
+                                </div>
+                            </a>
+                            <div style="padding: 0 1.5rem 1.5rem;">
+                                <button class="add-to-cart">カートに追加</button>
+                            </div>
+                        </div>
+
+                        <div class="product-card">
+                            <a href="product.html" style="text-decoration: none; color: inherit;">
+                                <div class="product-image">
+                                    <img src="https://images.unsplash.com/photo-1560769629-975ec94e6a86?w=400&h=300&fit=crop" alt="スニーカー" style="width: 100%; height: 100%; object-fit: cover; border-radius: 6px;">
+                                </div>
+                                <div class="product-info">
+                                    <h3>スニーカー</h3>
+                                    <div class="rating">★★★★☆</div>
+                                    <div class="price">¥7,800</div>
+                                </div>
+                            </a>
+                            <div style="padding: 0 1.5rem 1.5rem;">
+                                <button class="add-to-cart">カートに追加</button>
+                            </div>
+                        </div>
+
+                        <div class="product-card">
+                            <a href="product.html" style="text-decoration: none; color: inherit;">
+                                <div class="product-image">
+                                    <img src="https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=400&h=300&fit=crop" alt="ワンピース" style="width: 100%; height: 100%; object-fit: cover; border-radius: 6px;">
+                                </div>
+                                <div class="product-info">
+                                    <h3>ワンピース</h3>
+                                    <div class="rating">★★★★★</div>
+                                    <div class="price">¥6,500</div>
+                                </div>
+                            </a>
+                            <div style="padding: 0 1.5rem 1.5rem;">
+                                <button class="add-to-cart">カートに追加</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="pagination">
+                        <button disabled>← 前</button>
+                        <button class="active">1</button>
+                        <button>2</button>
+                        <button>3</button>
+                        <button>4</button>
+                        <button>5</button>
+                        <button>次 →</button>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>会社情報</h3>
+                    <ul>
+                        <li><a href="#">会社概要</a></li>
+                        <li><a href="#">採用情報</a></li>
+                        <li><a href="#">お問い合わせ</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>サポート</h3>
+                    <ul>
+                        <li><a href="#">よくある質問</a></li>
+                        <li><a href="#">配送について</a></li>
+                        <li><a href="#">返品・交換</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>SNS</h3>
+                    <div class="social-links">
+                        <span>📘</span>
+                        <span>🐦</span>
+                        <span>📷</span>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 ECショップ. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

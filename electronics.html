@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>家電 - ECショップ</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .category-page {
+            padding: 2rem 0;
+            background: var(--background-color);
+        }
+        
+        .category-header {
+            background: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .category-title {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--text-color);
+        }
+        
+        .category-description {
+            font-size: 1.1rem;
+            color: var(--secondary-color);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .category-layout {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 2rem;
+            align-items: start;
+        }
+        
+        .filters-sidebar {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            position: sticky;
+            top: 100px;
+        }
+        
+        .filter-section {
+            margin-bottom: 2rem;
+        }
+        
+        .filter-section:last-child {
+            margin-bottom: 0;
+        }
+        
+        .filter-title {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+        
+        .filter-option {
+            margin-bottom: 0.5rem;
+        }
+        
+        .filter-option label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        
+        .filter-option input[type="checkbox"] {
+            margin: 0;
+        }
+        
+        .price-range {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        
+        .price-input {
+            width: 70px;
+            padding: 0.4rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+        
+        .products-section {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .products-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--background-color);
+        }
+        
+        .results-count {
+            font-size: 0.9rem;
+            color: var(--secondary-color);
+        }
+        
+        .sort-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .sort-select {
+            padding: 0.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+        
+        .view-toggle {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .view-btn {
+            padding: 0.5rem;
+            border: 1px solid var(--border-color);
+            background: white;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        
+        .view-btn.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            padding: 2rem;
+        }
+        
+        .products-list {
+            display: none;
+            flex-direction: column;
+            gap: 1rem;
+            padding: 2rem;
+        }
+        
+        .product-item-list {
+            display: flex;
+            gap: 1.5rem;
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .product-item-list:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .product-image-list {
+            width: 120px;
+            height: 120px;
+            background: var(--background-color);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            color: var(--secondary-color);
+        }
+        
+        .product-details-list {
+            flex: 1;
+        }
+        
+        .pagination {
+            padding: 2rem;
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .pagination button {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border-color);
+            background: white;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+        
+        .pagination button:hover {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        .pagination button.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        .pagination button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .breadcrumb {
+            padding: 1rem 0;
+            background: var(--background-color);
+        }
+        
+        .breadcrumb nav {
+            font-size: 0.9rem;
+            color: var(--secondary-color);
+        }
+        
+        .breadcrumb a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        
+        @media (max-width: 768px) {
+            .category-layout {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .filters-sidebar {
+                position: static;
+                order: 2;
+            }
+            
+            .products-section {
+                order: 1;
+            }
+            
+            .products-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: stretch;
+            }
+            
+            .sort-controls {
+                justify-content: space-between;
+            }
+            
+            .products-grid {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 1rem;
+                padding: 1rem;
+            }
+            
+            .product-item-list {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .product-image-list {
+                width: 100%;
+                height: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-top">
+                <div class="logo">
+                    <h1><a href="index.html" style="color: inherit; text-decoration: none;">ECショップ</a></h1>
+                </div>
+                <div class="search-bar">
+                    <input type="text" placeholder="商品を検索...">
+                    <button type="submit">検索</button>
+                </div>
+                <div class="header-actions">
+                    <a href="cart.html" class="cart" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                        <span class="cart-icon">🛒</span>
+                        <span class="cart-count">0</span>
+                    </a>
+                    <div class="user-account">
+                        <span>ログイン</span>
+                    </div>
+                </div>
+            </div>
+            <nav class="navigation">
+                <ul>
+                    <li><a href="electronics.html" style="color: var(--primary-color); font-weight: 600;">家電</a></li>
+                    <li><a href="fashion.html">ファッション</a></li>
+                    <li><a href="books.html">本</a></li>
+                    <li><a href="sports.html">スポーツ</a></li>
+                    <li><a href="home.html">ホーム</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section class="breadcrumb">
+        <div class="container">
+            <nav>
+                <a href="index.html">ホーム</a> > 家電
+            </nav>
+        </div>
+    </section>
+
+    <section class="category-header">
+        <div class="container">
+            <h1 class="category-title">📱 家電</h1>
+            <p class="category-description">
+                最新のスマートフォンからノートパソコン、オーディオ機器まで、
+                高品質な家電製品を豊富に取り揃えています。
+            </p>
+        </div>
+    </section>
+
+    <main class="category-page">
+        <div class="container">
+            <div class="category-layout">
+                <aside class="filters-sidebar">
+                    <div class="filter-section">
+                        <h3 class="filter-title">価格帯</h3>
+                        <div class="price-range">
+                            <input type="number" class="price-input" placeholder="最小">
+                            <span>〜</span>
+                            <input type="number" class="price-input" placeholder="最大">
+                        </div>
+                    </div>
+                    
+                    <div class="filter-section">
+                        <h3 class="filter-title">ブランド</h3>
+                        <div class="filter-option">
+                            <label><input type="checkbox"> Apple (12)</label>
+                        </div>
+                        <div class="filter-option">
+                            <label><input type="checkbox"> Samsung (8)</label>
+                        </div>
+                        <div class="filter-option">
+                            <label><input type="checkbox"> Sony (15)</label>
+                        </div>
+                        <div class="filter-option">
+                            <label><input type="checkbox"> Panasonic (6)</label>
+                        </div>
+                        <div class="filter-option">
+                            <label><input type="checkbox"> その他 (20)</label>
+                        </div>
+                    </div>
+                    
+                    <div class="filter-section">
+                        <h3 class="filter-title">評価</h3>
+                        <div class="filter-option">
+                            <label><input type="checkbox"> ★★★★★ (15)</label>
+                        </div>
+                        <div class="filter-option">
+                            <label><input type="checkbox"> ★★★★☆ 以上 (28)</label>
+                        </div>
+                        <div class="filter-option">
+                            <label><input type="checkbox"> ★★★☆☆ 以上 (41)</label>
+                        </div>
+                    </div>
+                    
+                    <div class="filter-section">
+                        <h3 class="filter-title">カテゴリ</h3>
+                        <div class="filter-option">
+                            <label><input type="checkbox"> スマートフォン (18)</label>
+                        </div>
+                        <div class="filter-option">
+                            <label><input type="checkbox"> ノートPC (12)</label>
+                        </div>
+                        <div class="filter-option">
+                            <label><input type="checkbox"> イヤホン・ヘッドホン (15)</label>
+                        </div>
+                        <div class="filter-option">
+                            <label><input type="checkbox"> タブレット (8)</label>
+                        </div>
+                        <div class="filter-option">
+                            <label><input type="checkbox"> スマートウォッチ (8)</label>
+                        </div>
+                    </div>
+                </aside>
+
+                <section class="products-section">
+                    <div class="products-header">
+                        <div class="results-count">61件の商品が見つかりました</div>
+                        <div class="sort-controls">
+                            <select class="sort-select">
+                                <option value="popular">人気順</option>
+                                <option value="price-low">価格の安い順</option>
+                                <option value="price-high">価格の高い順</option>
+                                <option value="newest">新着順</option>
+                                <option value="rating">評価の高い順</option>
+                            </select>
+                            <div class="view-toggle">
+                                <button class="view-btn active" onclick="toggleView('grid')">⊞</button>
+                                <button class="view-btn" onclick="toggleView('list')">☰</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="products-grid" id="products-grid">
+                        <div class="product-card">
+                            <a href="product.html" style="text-decoration: none; color: inherit;">
+                                <div class="product-image">
+                                    <img src="https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=400&h=300&fit=crop" alt="iPhone 15 Pro" style="width: 100%; height: 100%; object-fit: cover; border-radius: 6px;">
+                                </div>
+                                <div class="product-info">
+                                    <h3>iPhone 15 Pro</h3>
+                                    <div class="rating">★★★★★</div>
+                                    <div class="price">¥159,800</div>
+                                </div>
+                            </a>
+                            <div style="padding: 0 1.5rem 1.5rem;">
+                                <button class="add-to-cart">カートに追加</button>
+                            </div>
+                        </div>
+
+                        <div class="product-card">
+                            <a href="product.html" style="text-decoration: none; color: inherit;">
+                                <div class="product-image">
+                                    <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400&h=300&fit=crop" alt="MacBook Air M2" style="width: 100%; height: 100%; object-fit: cover; border-radius: 6px;">
+                                </div>
+                                <div class="product-info">
+                                    <h3>MacBook Air M2</h3>
+                                    <div class="rating">★★★★★</div>
+                                    <div class="price">¥164,800</div>
+                                </div>
+                            </a>
+                            <div style="padding: 0 1.5rem 1.5rem;">
+                                <button class="add-to-cart">カートに追加</button>
+                            </div>
+                        </div>
+
+                        <div class="product-card">
+                            <a href="product.html" style="text-decoration: none; color: inherit;">
+                                <div class="product-image">
+                                    <img src="https://images.unsplash.com/photo-1600294037681-c80b4cb5b434?w=400&h=300&fit=crop" alt="AirPods Pro" style="width: 100%; height: 100%; object-fit: cover; border-radius: 6px;">
+                                </div>
+                                <div class="product-info">
+                                    <h3>AirPods Pro</h3>
+                                    <div class="rating">★★★★☆</div>
+                                    <div class="price">¥39,800</div>
+                                </div>
+                            </a>
+                            <div style="padding: 0 1.5rem 1.5rem;">
+                                <button class="add-to-cart">カートに追加</button>
+                            </div>
+                        </div>
+
+                        <div class="product-card">
+                            <a href="product.html" style="text-decoration: none; color: inherit;">
+                                <div class="product-image">
+                                    <img src="https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=400&h=300&fit=crop" alt="iPad Air" style="width: 100%; height: 100%; object-fit: cover; border-radius: 6px;">
+                                </div>
+                                <div class="product-info">
+                                    <h3>iPad Air</h3>
+                                    <div class="rating">★★★★★</div>
+                                    <div class="price">¥92,800</div>
+                                </div>
+                            </a>
+                            <div style="padding: 0 1.5rem 1.5rem;">
+                                <button class="add-to-cart">カートに追加</button>
+                            </div>
+                        </div>
+
+                        <div class="product-card">
+                            <a href="product.html" style="text-decoration: none; color: inherit;">
+                                <div class="product-image">
+                                    <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=300&fit=crop" alt="Apple Watch Series 9" style="width: 100%; height: 100%; object-fit: cover; border-radius: 6px;">
+                                </div>
+                                <div class="product-info">
+                                    <h3>Apple Watch Series 9</h3>
+                                    <div class="rating">★★★★☆</div>
+                                    <div class="price">¥59,800</div>
+                                </div>
+                            </a>
+                            <div style="padding: 0 1.5rem 1.5rem;">
+                                <button class="add-to-cart">カートに追加</button>
+                            </div>
+                        </div>
+
+                        <div class="product-card">
+                            <a href="product.html" style="text-decoration: none; color: inherit;">
+                                <div class="product-image">
+                                    <img src="https://images.unsplash.com/photo-1484704849700-f032a568e944?w=400&h=300&fit=crop" alt="Sony WH-1000XM5" style="width: 100%; height: 100%; object-fit: cover; border-radius: 6px;">
+                                </div>
+                                <div class="product-info">
+                                    <h3>Sony WH-1000XM5</h3>
+                                    <div class="rating">★★★★★</div>
+                                    <div class="price">¥49,500</div>
+                                </div>
+                            </a>
+                            <div style="padding: 0 1.5rem 1.5rem;">
+                                <button class="add-to-cart">カートに追加</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="products-list" id="products-list">
+                        <!-- リスト表示用（JS切り替え） -->
+                    </div>
+                    
+                    <div class="pagination">
+                        <button disabled>← 前</button>
+                        <button class="active">1</button>
+                        <button>2</button>
+                        <button>3</button>
+                        <button>4</button>
+                        <button>次 →</button>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>会社情報</h3>
+                    <ul>
+                        <li><a href="#">会社概要</a></li>
+                        <li><a href="#">採用情報</a></li>
+                        <li><a href="#">お問い合わせ</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>サポート</h3>
+                    <ul>
+                        <li><a href="#">よくある質問</a></li>
+                        <li><a href="#">配送について</a></li>
+                        <li><a href="#">返品・交換</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>SNS</h3>
+                    <div class="social-links">
+                        <span>📘</span>
+                        <span>🐦</span>
+                        <span>📷</span>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 ECショップ. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function toggleView(view) {
+            const gridView = document.getElementById('products-grid');
+            const listView = document.getElementById('products-list');
+            const gridBtn = document.querySelector('.view-btn[onclick="toggleView(\'grid\')"]');
+            const listBtn = document.querySelector('.view-btn[onclick="toggleView(\'list\')"]');
+            
+            if (view === 'grid') {
+                gridView.style.display = 'grid';
+                listView.style.display = 'none';
+                gridBtn.classList.add('active');
+                listBtn.classList.remove('active');
+            } else {
+                gridView.style.display = 'none';
+                listView.style.display = 'flex';
+                gridBtn.classList.remove('active');
+                listBtn.classList.add('active');
+            }
+        }
+    </script>
+</body>
+</html>

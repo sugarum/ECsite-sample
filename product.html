@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ジャケット - 商品詳細</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .breadcrumb {
+            padding: 1rem 0;
+            background: var(--background-color);
+        }
+        
+        .breadcrumb nav {
+            font-size: 0.9rem;
+            color: var(--secondary-color);
+        }
+        
+        .breadcrumb a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        
+        .product-detail {
+            padding: 2rem 0;
+            background: white;
+        }
+        
+        .product-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: start;
+        }
+        
+        .product-images {
+            position: sticky;
+            top: 100px;
+        }
+        
+        .main-image {
+            width: 100%;
+            height: 400px;
+            background: var(--background-color);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            border: 1px solid var(--border-color);
+        }
+        
+        .thumbnail-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.5rem;
+        }
+        
+        .thumbnail {
+            aspect-ratio: 1;
+            background: var(--background-color);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            font-size: 0.8rem;
+            color: var(--secondary-color);
+        }
+        
+        .thumbnail:hover,
+        .thumbnail.active {
+            border-color: var(--primary-color);
+        }
+        
+        .product-info h1 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .product-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .rating-detail {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .review-count {
+            color: var(--secondary-color);
+            font-size: 0.9rem;
+        }
+        
+        .price-section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: var(--background-color);
+            border-radius: 8px;
+        }
+        
+        .current-price {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        
+        .original-price {
+            font-size: 1.2rem;
+            color: var(--secondary-color);
+            text-decoration: line-through;
+            margin-left: 1rem;
+        }
+        
+        .discount {
+            background: var(--accent-color);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-left: 1rem;
+        }
+        
+        .purchase-section {
+            margin-bottom: 2rem;
+        }
+        
+        .quantity-selector {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+        }
+        
+        .quantity-btn {
+            background: none;
+            border: none;
+            padding: 0.5rem;
+            cursor: pointer;
+            font-size: 1.2rem;
+            color: var(--secondary-color);
+        }
+        
+        .quantity-input {
+            border: none;
+            padding: 0.5rem;
+            width: 60px;
+            text-align: center;
+            font-size: 1rem;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .btn-primary {
+            flex: 1;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .btn-primary:hover {
+            background: #1d4ed8;
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+            padding: 1rem 2rem;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-secondary:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .product-description {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .description-tabs {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .tab {
+            padding: 1rem 0;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            font-weight: 500;
+        }
+        
+        .tab.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+        }
+        
+        .tab-content {
+            line-height: 1.8;
+        }
+        
+        .specs-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .specs-table th,
+        .specs-table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .specs-table th {
+            background: var(--background-color);
+            font-weight: 600;
+            width: 30%;
+        }
+        
+        .reviews-section {
+            margin-top: 2rem;
+        }
+        
+        .review-item {
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+        
+        .review-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        .reviewer-name {
+            font-weight: 600;
+        }
+        
+        .review-date {
+            color: var(--secondary-color);
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .product-layout {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .product-images {
+                position: static;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .description-tabs {
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-top">
+                <div class="logo">
+                    <h1><a href="index.html" style="color: inherit; text-decoration: none;">ECショップ</a></h1>
+                </div>
+                <div class="search-bar">
+                    <input type="text" placeholder="商品を検索...">
+                    <button type="submit">検索</button>
+                </div>
+                <div class="header-actions">
+                    <a href="cart.html" class="cart" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                        <span class="cart-icon">🛒</span>
+                        <span class="cart-count">0</span>
+                    </a>
+                    <div class="user-account">
+                        <span>ログイン</span>
+                    </div>
+                </div>
+            </div>
+            <nav class="navigation">
+                <ul>
+                    <li><a href="electronics.html">家電</a></li>
+                    <li><a href="fashion.html">ファッション</a></li>
+                    <li><a href="books.html">本</a></li>
+                    <li><a href="sports.html">スポーツ</a></li>
+                    <li><a href="home.html">ホーム</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section class="breadcrumb">
+        <div class="container">
+            <nav>
+                <a href="index.html">ホーム</a> > 
+                <a href="fashion.html">ファッション</a> > 
+                <a href="#">アウター</a> > 
+                ジャケット
+            </nav>
+        </div>
+    </section>
+
+    <main class="product-detail">
+        <div class="container">
+            <div class="product-layout">
+                <div class="product-images">
+                    <div class="main-image">
+                        <img src="https://images.unsplash.com/photo-1551028719-00167b16eac5?w=600&h=400&fit=crop" alt="ジャケット" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">
+                    </div>
+                    <div class="thumbnail-grid">
+                        <div class="thumbnail active">
+                            <img src="https://images.unsplash.com/photo-1551028719-00167b16eac5?w=100&h=100&fit=crop" alt="サムネイル1" style="width: 100%; height: 100%; object-fit: cover; border-radius: 4px;">
+                        </div>
+                        <div class="thumbnail">
+                            <img src="https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=100&h=100&fit=crop" alt="サムネイル2" style="width: 100%; height: 100%; object-fit: cover; border-radius: 4px;">
+                        </div>
+                        <div class="thumbnail">
+                            <img src="https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=100&h=100&fit=crop" alt="サムネイル3" style="width: 100%; height: 100%; object-fit: cover; border-radius: 4px;">
+                        </div>
+                        <div class="thumbnail">
+                            <img src="https://images.unsplash.com/photo-1582552938357-32b906df40cb?w=100&h=100&fit=crop" alt="サムネイル4" style="width: 100%; height: 100%; object-fit: cover; border-radius: 4px;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="product-info">
+                    <h1>ジャケット</h1>
+                    
+                    <div class="product-meta">
+                        <div class="rating-detail">
+                            <div class="rating">★★★★☆</div>
+                            <span class="review-count">(248件のレビュー)</span>
+                        </div>
+                    </div>
+
+                    <div class="price-section">
+                        <span class="current-price">¥8,900</span>
+                        <span class="original-price">¥10,800</span>
+                        <span class="discount">18%OFF</span>
+                    </div>
+
+                    <div class="purchase-section">
+                        <div class="quantity-selector">
+                            <label>数量:</label>
+                            <div class="quantity-controls">
+                                <button class="quantity-btn">−</button>
+                                <input type="number" class="quantity-input" value="1" min="1">
+                                <button class="quantity-btn">+</button>
+                            </div>
+                        </div>
+
+                        <div class="action-buttons">
+                            <a href="cart.html" class="btn-primary" style="text-decoration: none; text-align: center;">カートに追加</a>
+                            <button class="btn-secondary">♡ お気に入り</button>
+                        </div>
+                    </div>
+
+                    <div class="product-description">
+                        <div class="description-tabs">
+                            <div class="tab active">商品説明</div>
+                            <div class="tab">仕様</div>
+                            <div class="tab">レビュー</div>
+                        </div>
+
+                        <div class="tab-content">
+                            <h3>商品の特徴</h3>
+                            <p>クラシックなジャケットに現代的なシルエットを融合させた一着。高品質なデニム生地を使用し、長くご愛用いただけるアイテムです。</p>
+                            
+                            <h4>商品詳細</h4>
+                            <ul>
+                                <li>100%コットンデニム</li>
+                                <li>ヴィンテージ風加工</li>
+                                <li>レギュラーフィット</li>
+                                <li>胸ポケット×2</li>
+                                <li>ボタンフロント</li>
+                            </ul>
+
+                            <table class="specs-table" style="display: none;">
+                                <tr><th>素材</th><td>コットン100%</td></tr>
+                                <tr><th>カラー</th><td>インディゴブルー</td></tr>
+                                <tr><th>サイズ</th><td>M（着丈65cm、身幅53cm）</td></tr>
+                                <tr><th>重量</th><td>約650g</td></tr>
+                                <tr><th>加工</th><td>ヴィンテージウォッシュ</td></tr>
+                                <tr><th>フィット</th><td>レギュラーフィット</td></tr>
+                                <tr><th>生産国</th><td>日本</td></tr>
+                                <tr><th>洗濯</th><td>手洗い推奨</td></tr>
+                                <tr><th>モデル</th><td>DJ-2024-M</td></tr>
+                            </table>
+
+                            <div class="reviews-section" style="display: none;">
+                                <div class="review-item">
+                                    <div class="review-header">
+                                        <span class="reviewer-name">田中太郎</span>
+                                        <span class="review-date">2024年1月15日</span>
+                                    </div>
+                                    <div class="rating">★★★★★</div>
+                                    <p>とても使いやすく、カメラの画質も素晴らしいです。バッテリーの持ちも良く、一日中使っても安心です。</p>
+                                </div>
+                                
+                                <div class="review-item">
+                                    <div class="review-header">
+                                        <span class="reviewer-name">佐藤花子</span>
+                                        <span class="review-date">2024年1月10日</span>
+                                    </div>
+                                    <div class="rating">★★★★☆</div>
+                                    <p>デザインがおしゃれで気に入っています。処理速度も速く、ゲームもサクサク動きます。</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>会社情報</h3>
+                    <ul>
+                        <li><a href="#">会社概要</a></li>
+                        <li><a href="#">採用情報</a></li>
+                        <li><a href="#">お問い合わせ</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>サポート</h3>
+                    <ul>
+                        <li><a href="#">よくある質問</a></li>
+                        <li><a href="#">配送について</a></li>
+                        <li><a href="#">返品・交換</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>SNS</h3>
+                    <div class="social-links">
+                        <span>📘</span>
+                        <span>🐦</span>
+                        <span>📷</span>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 ECショップ. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

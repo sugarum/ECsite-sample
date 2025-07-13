@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ショッピングカート - ECショップ</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .cart-page {
+            padding: 2rem 0;
+            background: var(--background-color);
+            min-height: 60vh;
+        }
+        
+        .cart-container {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 2rem;
+            align-items: start;
+        }
+        
+        .cart-items {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .cart-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            background: var(--background-color);
+        }
+        
+        .cart-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+        
+        .cart-item {
+            display: grid;
+            grid-template-columns: 100px 1fr auto auto auto;
+            gap: 1rem;
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            align-items: center;
+        }
+        
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+        
+        .item-image {
+            width: 100px;
+            height: 100px;
+            background: var(--background-color);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            color: var(--secondary-color);
+            border: 1px solid var(--border-color);
+        }
+        
+        .item-details h3 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1.1rem;
+        }
+        
+        .item-specs {
+            color: var(--secondary-color);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .item-stock {
+            color: green;
+            font-size: 0.9rem;
+        }
+        
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            width: fit-content;
+        }
+        
+        .qty-btn {
+            background: none;
+            border: none;
+            padding: 0.5rem;
+            cursor: pointer;
+            color: var(--secondary-color);
+            font-size: 1.2rem;
+            width: 40px;
+        }
+        
+        .qty-input {
+            border: none;
+            width: 60px;
+            text-align: center;
+            padding: 0.5rem 0;
+            font-size: 1rem;
+        }
+        
+        .item-price {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            text-align: right;
+        }
+        
+        .remove-item {
+            background: none;
+            border: none;
+            color: var(--secondary-color);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+        
+        .remove-item:hover {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+        
+        .order-summary {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+        
+        .order-summary h3 {
+            margin: 0 0 1.5rem 0;
+            font-size: 1.3rem;
+        }
+        
+        .summary-line {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+        }
+        
+        .summary-line.total {
+            font-size: 1.2rem;
+            font-weight: 600;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+            margin-top: 1rem;
+        }
+        
+        .summary-line.total .amount {
+            color: var(--primary-color);
+        }
+        
+        .checkout-btn {
+            width: 100%;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 1.5rem;
+            transition: background-color 0.2s;
+        }
+        
+        .checkout-btn:hover {
+            background: #1d4ed8;
+        }
+        
+        .continue-shopping {
+            text-align: center;
+            margin-top: 1rem;
+        }
+        
+        .continue-shopping a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .empty-cart {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: white;
+            border-radius: 8px;
+        }
+        
+        .empty-cart h2 {
+            margin-bottom: 1rem;
+            color: var(--secondary-color);
+        }
+        
+        .shipping-options {
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background: var(--background-color);
+            border-radius: 6px;
+        }
+        
+        .shipping-option {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        .shipping-option:last-child {
+            margin-bottom: 0;
+        }
+        
+        .shipping-option input[type="radio"] {
+            margin-right: 0.5rem;
+        }
+        
+        @media (max-width: 768px) {
+            .cart-container {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .cart-item {
+                grid-template-columns: 80px 1fr;
+                gap: 1rem;
+            }
+            
+            .item-image {
+                width: 80px;
+                height: 80px;
+            }
+            
+            .item-actions {
+                grid-column: 1 / -1;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-top: 1rem;
+                padding-top: 1rem;
+                border-top: 1px solid var(--border-color);
+            }
+            
+            .order-summary {
+                position: static;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-top">
+                <div class="logo">
+                    <h1><a href="index.html" style="color: inherit; text-decoration: none;">ECショップ</a></h1>
+                </div>
+                <div class="search-bar">
+                    <input type="text" placeholder="商品を検索...">
+                    <button type="submit">検索</button>
+                </div>
+                <div class="header-actions">
+                    <div class="cart" style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: var(--primary-color); font-weight: 600;">
+                        <span class="cart-icon">🛒</span>
+                        <span class="cart-count">3</span>
+                    </div>
+                    <div class="user-account">
+                        <span>ログイン</span>
+                    </div>
+                </div>
+            </div>
+            <nav class="navigation">
+                <ul>
+                    <li><a href="electronics.html">家電</a></li>
+                    <li><a href="fashion.html">ファッション</a></li>
+                    <li><a href="books.html">本</a></li>
+                    <li><a href="sports.html">スポーツ</a></li>
+                    <li><a href="home.html">ホーム</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="cart-page">
+        <div class="container">
+            <div class="cart-container">
+                <div class="cart-items">
+                    <div class="cart-header">
+                        <h2>ショッピングカート (3商品)</h2>
+                    </div>
+                    
+                    <div class="cart-item">
+                        <div class="item-image">
+                            <img src="https://images.unsplash.com/photo-1551028719-00167b16eac5?w=120&h=120&fit=crop" alt="ジャケット" style="width: 100%; height: 100%; object-fit: cover; border-radius: 6px;">
+                        </div>
+                        <div class="item-details">
+                            <h3><a href="product.html" style="text-decoration: none; color: inherit;">ジャケット</a></h3>
+                            <div class="item-specs">サイズ: M, カラー: インディゴ</div>
+                            <div class="item-stock">在庫あり</div>
+                        </div>
+                        <div class="quantity-control">
+                            <button class="qty-btn">−</button>
+                            <input type="number" class="qty-input" value="1" min="1">
+                            <button class="qty-btn">+</button>
+                        </div>
+                        <div class="item-price">¥8,900</div>
+                        <button class="remove-item">🗑️</button>
+                    </div>
+                    
+                    <div class="cart-item">
+                        <div class="item-image">
+                            <img src="https://images.unsplash.com/photo-1560769629-975ec94e6a86?w=120&h=120&fit=crop" alt="スニーカー" style="width: 100%; height: 100%; object-fit: cover; border-radius: 6px;">
+                        </div>
+                        <div class="item-details">
+                            <h3><a href="product.html" style="text-decoration: none; color: inherit;">スニーカー</a></h3>
+                            <div class="item-specs">サイズ: 26.5cm, カラー: ホワイト</div>
+                            <div class="item-stock">在庫あり</div>
+                        </div>
+                        <div class="quantity-control">
+                            <button class="qty-btn">−</button>
+                            <input type="number" class="qty-input" value="2" min="1">
+                            <button class="qty-btn">+</button>
+                        </div>
+                        <div class="item-price">¥25,600</div>
+                        <button class="remove-item">🗑️</button>
+                    </div>
+                    
+                    <div class="cart-item">
+                        <div class="item-image">
+                            <img src="https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=120&h=120&fit=crop" alt="レザーバッグ" style="width: 100%; height: 100%; object-fit: cover; border-radius: 6px;">
+                        </div>
+                        <div class="item-details">
+                            <h3><a href="product.html" style="text-decoration: none; color: inherit;">レザーバッグ</a></h3>
+                            <div class="item-specs">サイズ: ミディアム, カラー: ブラック</div>
+                            <div class="item-stock">在庫あり</div>
+                        </div>
+                        <div class="quantity-control">
+                            <button class="qty-btn">−</button>
+                            <input type="number" class="qty-input" value="1" min="1">
+                            <button class="qty-btn">+</button>
+                        </div>
+                        <div class="item-price">¥15,800</div>
+                        <button class="remove-item">🗑️</button>
+                    </div>
+                </div>
+                
+                <div class="order-summary">
+                    <h3>注文内容</h3>
+                    
+                    <div class="summary-line">
+                        <span>商品合計 (4点):</span>
+                        <span>¥50,300</span>
+                    </div>
+                    
+                    <div class="shipping-options">
+                        <h4 style="margin: 0 0 1rem 0; font-size: 1rem;">配送オプション</h4>
+                        <div class="shipping-option">
+                            <label>
+                                <input type="radio" name="shipping" value="standard" checked>
+                                通常配送 (3-5日)
+                            </label>
+                            <span>無料</span>
+                        </div>
+                        <div class="shipping-option">
+                            <label>
+                                <input type="radio" name="shipping" value="express">
+                                お急ぎ便 (1-2日)
+                            </label>
+                            <span>¥500</span>
+                        </div>
+                    </div>
+                    
+                    <div class="summary-line">
+                        <span>配送料:</span>
+                        <span>無料</span>
+                    </div>
+                    
+                    <div class="summary-line">
+                        <span>消費税:</span>
+                        <span>¥5,030</span>
+                    </div>
+                    
+                    <div class="summary-line total">
+                        <span>合計:</span>
+                        <span class="amount">¥55,330</span>
+                    </div>
+                    
+                    <a href="checkout.html" class="checkout-btn" style="text-decoration: none; text-align: center; display: block;">レジに進む</a>
+                    
+                    <div class="continue-shopping">
+                        <a href="index.html">← 買い物を続ける</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>会社情報</h3>
+                    <ul>
+                        <li><a href="#">会社概要</a></li>
+                        <li><a href="#">採用情報</a></li>
+                        <li><a href="#">お問い合わせ</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>サポート</h3>
+                    <ul>
+                        <li><a href="#">よくある質問</a></li>
+                        <li><a href="#">配送について</a></li>
+                        <li><a href="#">返品・交換</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>SNS</h3>
+                    <div class="social-links">
+                        <span>📘</span>
+                        <span>🐦</span>
+                        <span>📷</span>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 ECショップ. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
